@@ -1,49 +1,46 @@
-# Microservices Demo
+# Microservices Demo Ops
 
-A demo application with Java, Go, Javascript, Kafka and PostgresQL.
+Repositorio de operaciones para despliegue e infraestructura del demo de microservicios.
 
-## Architecture
+## Alcance
+
+Este repositorio contiene solo componentes de Ops:
+
+- Chart de infraestructura compartida: `infrastructure/`
+- Charts de despliegue de servicios: `vote/chart/`, `worker/chart/`, `result/chart/`
+- Orquestacion de despliegue en Okteto: `okteto.yml`
+- Politicas y flujo de trabajo de operaciones: `branching-ops.md`
+
+El codigo fuente de las aplicaciones (Java, Go, Node.js) vive en el repositorio Dev.
+
+## Arquitectura
 
 ![Architecture diagram](architecture.png)
 
-* A front-end web app in [Java](/vote) which lets you vote between Tacos and Burritos
-* A [Kafka](https://bitnami.com/stack/kafka/helm) queue which collects new votes
-* A [Golang](/worker) or worker which consumes votes from Kafka and stores them in PostgresQL
-* A [PostgresQL](https://bitnami.com/stack/postgresql/helm) database
-* A [Node.js](/result) webapp which shows the results of the voting in real time
+- `vote`: frontend web
+- `worker`: consumidor Kafka que persiste votos
+- `result`: frontend de resultados en tiempo real
+- `kafka` y `postgresql`: infraestructura base
 
-## Run the demo application in Okteto
+## Despliegue en Okteto
 
-```
-$ git clone https://github.com/okteto/microservices-demo
-$ cd microservices-demo
-$ okteto login
-$ okteto deploy
+```bash
+okteto login
+okteto deploy
 ```
 
-## Develop on the Result microservice
+`okteto deploy` ejecuta los charts Helm de infraestructura y servicios usando los valores versionados en este repositorio.
 
-```
-$ okteto up result
-```
+## Flujo recomendado Dev -> Ops
 
-## Develop on the Vote microservice
+1. Dev genera y publica imagenes inmutables por servicio (tag o digest).
+2. Ops actualiza referencias de imagen en:
+	- `vote/chart/values.yaml`
+	- `worker/chart/values.yaml`
+	- `result/chart/values.yaml`
+3. Se valida por PR (helm lint/template + revisiones).
+4. Se hace merge a `main` y se despliega.
 
-```
-$ okteto up vote
-```
+## Branching y governance
 
-## Develop on the Worker microservice
-
-```
-$ okteto up worker
-$ make start
-```
-
-## Notes
-
-The voting application only accepts one vote per client. It does not register votes if a vote has already been submitted from a client.
-
-This isn't an example of a properly architected perfectly designed distributed app... it's just a simple
-example of the various types of pieces and languages you might see (queues, persistent data, etc), and how to
-deal with them in Okteto.
+La estrategia de ramas y reglas operativas estan en `branching-ops.md`.

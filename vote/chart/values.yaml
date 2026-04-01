@@ -3,4 +3,4 @@
 # Declare variables to be passed into your templates.
 
 replicaCount: 1
-image: okteto.dev/vote
+image: ghcr.io/your-org/vote:1.0.0

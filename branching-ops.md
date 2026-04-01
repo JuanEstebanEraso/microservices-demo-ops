@@ -10,7 +10,7 @@ El objetivo es mantener una forma de trabajo simple, segura y auditable para cam
 
 ## 2. Alcance de este repositorio
 
-Este repositorio contiene componentes de aplicación y operaciones. Para la estrategia de ops, se consideran rutas críticas:
+Este repositorio contiene exclusivamente componentes de operaciones. Para la estrategia de ops, se consideran rutas críticas:
 
 - infrastructure/
 - vote/chart/
