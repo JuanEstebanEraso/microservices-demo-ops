@@ -104,6 +104,8 @@ services:
   result:
     image: ${ACR_LOGIN_SERVER}/result:${IMAGE_TAG:-latest}
     container_name: result
+    ports:
+      - "5001:80"
     environment:
       DATABASE_HOST: ${POSTGRES_HOST}
       DATABASE_USER: ${POSTGRES_USER}
