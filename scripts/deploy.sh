@@ -14,7 +14,7 @@ echo "=== Deploy iniciado - tag: ${IMAGE_TAG} ==="
 
 cd /home/azureuser/microservices-demo-ops
 
-git pull origin trunk
+git pull origin main
 
 az acr login --name ${ACR_NAME}
 
