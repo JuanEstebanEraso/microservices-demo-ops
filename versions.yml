@@ -1,0 +1,20 @@
+tools:
+  docker_compose: "2.24.0"
+  nginx: "alpine"
+  redis: "7-alpine"
+
+microservices:
+  vote:
+    language: java
+    base_image: "eclipse-temurin:22-jre-jammy"
+  worker:
+    language: go
+    base_image: "golang:1.24.1-bookworm"
+  result:
+    language: nodejs
+    base_image: "node:22.12.0-slim"
+
+azure:
+  acr_sku: Basic
+  postgres_sku: B1ms
+  eventhub_sku: Basic
