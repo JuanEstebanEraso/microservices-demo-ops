@@ -33,7 +33,7 @@ services:
     extra_hosts:
       - "kafka:4.206.228.223"
     environment:
-      KAFKA_BOOTSTRAP_SERVERS: ${EVENTHUB_BOOTSTRAP_SERVERS}
+      KAFKA_BOOTSTRAP_SERVERS: kafka:9093
       KAFKA_SECURITY_PROTOCOL: SASL_SSL
       KAFKA_SASL_MECHANISM: PLAIN
       KAFKA_SASL_USERNAME: "$$ConnectionString"
@@ -50,7 +50,7 @@ services:
       - "postgresql:${POSTGRES_IP}"
       - "kafka:4.206.228.223"
     environment:
-      KAFKA_BOOTSTRAP_SERVERS: ${EVENTHUB_BOOTSTRAP_SERVERS}
+      KAFKA_BOOTSTRAP_SERVERS: kafka:9093
       KAFKA_SECURITY_PROTOCOL: SASL_SSL
       KAFKA_SASL_MECHANISM: PLAIN
       KAFKA_SASL_USERNAME: "$$ConnectionString"
@@ -78,7 +78,7 @@ services:
       - "postgresql:${POSTGRES_IP}"
       - "kafka:4.206.228.223"
     environment:
-      KAFKA_BOOTSTRAP_SERVERS: ${EVENTHUB_BOOTSTRAP_SERVERS}
+      KAFKA_BOOTSTRAP_SERVERS: kafka:9093
       KAFKA_SECURITY_PROTOCOL: SASL_SSL
       KAFKA_SASL_MECHANISM: PLAIN
       KAFKA_SASL_USERNAME: "$$ConnectionString"
@@ -106,7 +106,7 @@ services:
       - "postgresql:${POSTGRES_IP}"
       - "kafka:4.206.228.223"
     environment:
-      KAFKA_BOOTSTRAP_SERVERS: ${EVENTHUB_BOOTSTRAP_SERVERS}
+      KAFKA_BOOTSTRAP_SERVERS: kafka:9093
       KAFKA_SECURITY_PROTOCOL: SASL_SSL
       KAFKA_SASL_MECHANISM: PLAIN
       KAFKA_SASL_USERNAME: "$$ConnectionString"
