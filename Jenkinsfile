@@ -29,9 +29,13 @@ pipeline {
 
         stage('Validate Config') {
             steps {
-                // Verificamos que el docker-compose.yml no tenga errores de indentación
-                sh 'docker-compose config --quiet'
-                echo "Configuración de Docker válida."
+                sshagent(['vm-app-ssh-key']) {
+                    sh """
+                        echo "🔍 Validando configuración remotamente en la App VM..."
+                        ssh -o StrictHostKeyChecking=no ${VM_APP_USER}@${VM_APP_HOST} \
+                            "docker compose -f /home/azureuser/microservices-demo-ops/docker-compose.yml config --quiet"
+                    """
+                }
             }
         }
 
