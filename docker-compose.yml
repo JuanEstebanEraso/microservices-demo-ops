@@ -43,7 +43,8 @@ services:
       - voting-network
     restart: unless-stopped
 
-  worker-1:
+  # Definimos una base para los workers para no repetir código
+  worker-1: &worker_base
     image: ${ACR_LOGIN_SERVER}/worker:${IMAGE_TAG:-latest}
     container_name: worker-1
     extra_hosts:
@@ -57,11 +58,12 @@ services:
       KAFKA_SASL_PASSWORD: ${EVENTHUB_CONNECTION_STRING}
       KAFKA_TOPIC: votes
       KAFKA_GROUP_ID: workers
-      DATABASE_HOST: ${POSTGRES_HOST}
+      # CAMBIO CLAVE: Usamos el alias 'postgresql' definido en extra_hosts
+      DATABASE_HOST: postgresql
+      POSTGRES_HOST: postgresql
       DATABASE_USER: ${POSTGRES_USER}
       DATABASE_PASSWORD: ${POSTGRES_PASSWORD}
       DATABASE_NAME: ${POSTGRES_DB}
-      POSTGRES_HOST: ${POSTGRES_HOST}
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
       POSTGRES_DB: ${POSTGRES_DB}
@@ -72,60 +74,12 @@ services:
     restart: unless-stopped
 
   worker-2:
-    image: ${ACR_LOGIN_SERVER}/worker:${IMAGE_TAG:-latest}
+    <<: *worker_base
     container_name: worker-2
-    extra_hosts:
-      - "postgresql:${POSTGRES_IP}"
-      - "eventhub-app.servicebus.windows.net:4.206.228.223"
-    environment:
-      KAFKA_BOOTSTRAP_SERVERS: eventhub-app.servicebus.windows.net:9093
-      KAFKA_SECURITY_PROTOCOL: SASL_SSL
-      KAFKA_SASL_MECHANISM: PLAIN
-      KAFKA_SASL_USERNAME: "$$ConnectionString"
-      KAFKA_SASL_PASSWORD: ${EVENTHUB_CONNECTION_STRING}
-      KAFKA_TOPIC: votes
-      KAFKA_GROUP_ID: workers
-      DATABASE_HOST: ${POSTGRES_HOST}
-      DATABASE_USER: ${POSTGRES_USER}
-      DATABASE_PASSWORD: ${POSTGRES_PASSWORD}
-      DATABASE_NAME: ${POSTGRES_DB}
-      POSTGRES_HOST: ${POSTGRES_HOST}
-      POSTGRES_USER: ${POSTGRES_USER}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
-      POSTGRES_DB: ${POSTGRES_DB}
-      POSTGRES_PORT: ${POSTGRES_PORT}
-      DATABASE_SSL: "true"
-    networks:
-      - voting-network
-    restart: unless-stopped
 
   worker-3:
-    image: ${ACR_LOGIN_SERVER}/worker:${IMAGE_TAG:-latest}
+    <<: *worker_base
     container_name: worker-3
-    extra_hosts:
-      - "postgresql:${POSTGRES_IP}"
-      - "eventhub-app.servicebus.windows.net:4.206.228.223"
-    environment:
-      KAFKA_BOOTSTRAP_SERVERS: eventhub-app.servicebus.windows.net:9093
-      KAFKA_SECURITY_PROTOCOL: SASL_SSL
-      KAFKA_SASL_MECHANISM: PLAIN
-      KAFKA_SASL_USERNAME: "$$ConnectionString"
-      KAFKA_SASL_PASSWORD: ${EVENTHUB_CONNECTION_STRING}
-      KAFKA_TOPIC: votes
-      KAFKA_GROUP_ID: workers
-      DATABASE_HOST: ${POSTGRES_HOST}
-      DATABASE_USER: ${POSTGRES_USER}
-      DATABASE_PASSWORD: ${POSTGRES_PASSWORD}
-      DATABASE_NAME: ${POSTGRES_DB}
-      POSTGRES_HOST: ${POSTGRES_HOST}
-      POSTGRES_USER: ${POSTGRES_USER}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
-      POSTGRES_DB: ${POSTGRES_DB}
-      POSTGRES_PORT: ${POSTGRES_PORT}
-      DATABASE_SSL: "true"
-    networks:
-      - voting-network
-    restart: unless-stopped
 
   result:
     image: ${ACR_LOGIN_SERVER}/result:${IMAGE_TAG:-latest}
@@ -135,11 +89,12 @@ services:
     extra_hosts:
       - "postgresql:${POSTGRES_IP}"
     environment:
-      DATABASE_HOST: ${POSTGRES_HOST}
+      # CAMBIO CLAVE: También aquí usamos el alias
+      DATABASE_HOST: postgresql
+      POSTGRES_HOST: postgresql
       DATABASE_USER: ${POSTGRES_USER}
       DATABASE_PASSWORD: ${POSTGRES_PASSWORD}
       DATABASE_NAME: ${POSTGRES_DB}
-      POSTGRES_HOST: ${POSTGRES_HOST}
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
       POSTGRES_DB: ${POSTGRES_DB}
