@@ -38,15 +38,16 @@ pipeline {
 
         stage('Deploy to VM') {
             steps {
-                // Usamos la llave privada guardada en Jenkins para entrar a la VM
                 sshagent(['vm-app-ssh-key']) {
                     sh """
-                        echo "Ejecutando script de despliegue en la VM..."
-                        
-                        # Conexión SSH: ejecutamos el script que ya vive en tu VM.
-                        # Pasamos 'latest' como tag por defecto para que el script actualice el .env
-                        ssh -o StrictHostKeyChecking=no ${VM_APP_USER}@${VM_APP_HOST} \
-                            "bash /home/azureuser/microservices-demo-ops/scripts/deploy.sh latest ${ACR_LOGIN_SERVER} ${ACR_NAME}"
+                        # Jenkins se conecta por SSH y le dice a la VM: 
+                        # "Oye VM, actualiza tu carpeta con lo último de GitHub y reinicia Nginx"
+                        ssh -o StrictHostKeyChecking=no ${VM_APP_USER}@${VM_APP_HOST} "
+                            cd /home/azureuser/microservices-demo-ops && \
+                            git pull origin main && \
+                            bash scripts/deploy.sh latest ${ACR_LOGIN_SERVER} ${ACR_NAME} && \
+                            docker-compose up -d --force-recreate nginx
+                        "
                     """
                 }
             }
